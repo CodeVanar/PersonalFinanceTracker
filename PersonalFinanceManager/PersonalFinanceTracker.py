@@ -19,6 +19,7 @@ from datetime import date
 import csv
 from decimal import Decimal, InvalidOperation
 import os
+import pandas as pd
 
 FILENAME = "transaction.csv"
 
@@ -384,53 +385,44 @@ def valid_choice():
             print("Not a valid choice!!!")
 
 
-
+def choose_index(df):
+    while True:
+        index = input("Enter the index of the transaction to delete :   ").strip()
+        if len(index) > 1 :
+            print("Invalid Index ")
+            continue
+        if index.isalpha():
+            print("Invalid value : Enter Numbers only ")
+            continue
+        if index in set("!@#$%^&*_-+=/|><\\"):
+            print("Invalid Index : special charcter not allowed ")
+            continue
+        index = int(index) -1
+        if index > df.index[-1]:
+            print("Invalid Index : index exceeded !!")
+            continue
+        if index < 0 :
+            print("Invalid Index : Index cannot be Negative")
+            continue
+        return index 
+    
+def print_transaction(df):
+    df.index = df.index + 1
+    print(df)
 
 def delete_transaction():
-    #delete a transaction based on the date,amount and type
-    clear_console()
-    date_input = valid_date()
-    amt = round(float(valid_amount()), 2)  # normalize to avoid float mismatches
-    type_ = valid_type()
-
-    if not transactions:
-        print("No records found!")
-        return
+    df = pd.DataFrame(transactions,columns =["Date","Amount","Type","Description"] )
+    print_transaction(df)
+    index_to_delete = choose_index(df)
+    del transactions[index_to_delete]
+    save_transactions(transactions)
+    df1 = pd.DataFrame(transactions, columns = ["Date", "Amount", "Type", "Description"])
+    print("\n")
+    print(f"------------Transaction Number {index_to_delete} is Successfully Deleted---------")
+    print("\n")
+    print("----------------ALL THE TRANSACTION AFTER DELETION---------------------")
+    print_transaction(df1)
     
-    index_to_delete = None
-    for idx, transaction in enumerate(transactions):
-        # Normalize amount and date when comparing, since stored data might be float/string
-        try:
-            transaction_date_str = transaction["Date"]
-            input_date_str = date_input.strftime("%d-%m-%Y")
-            if (
-                transaction_date_str == input_date_str and
-                round(float(transaction["Amount"]), 2) == amt and
-                transaction["Type"] == type_
-            ):
-                print("----- Transaction Found -----")
-                print("Deleting the first occurrence only")
-                print(
-                    f"Date: {transaction['Date']} | "
-                    f"Amount: {transaction['Amount']} | "
-                    f"Type: {transaction['Type']} | "
-                    f"Description: {transaction['Description']}"
-                )
-
-                choice = valid_choice()
-                if choice == "y":
-                    index_to_delete = idx
-                    print(" Deletion confirmed!")
-                else:
-                    print(" Deletion cancelled.")
-                break  # exit after first match 
-        except (KeyError, ValueError, TypeError) as e:
-            print(f" Skipping corrupted transaction: {transaction} ({e})")
-
-    if index_to_delete is not None:
-        del transactions[index_to_delete]
-        save_transactions(transactions)   # save immediately after modifying
-
 
 
 
