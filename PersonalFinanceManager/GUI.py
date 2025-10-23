@@ -33,7 +33,7 @@ def open_win1():
 
     
     def submit():
-        result = pft.add_transaction(
+        pft.add_transaction(
             e1.get(), e2.get(),e3.get(),e4.get(),
             info_callback = lambda msg : messagebox.showinfo("Info",msg)
         )        
