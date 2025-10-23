@@ -17,32 +17,32 @@ def info_msg():
 
 class TestValidAmount: 
     
-    def test_EmptyAmount(self, info_msg):
+    def test_empty_amount(self, info_msg):
         result = pft.valid_amount("",info_msg.append)
         assert result is None 
         assert "Amount cannot be Empty" in info_msg
 
-    def test_ZeroAmount(self,info_msg):
+    def test_zero_amount(self,info_msg):
         result = pft.valid_amount("0",info_msg.append)
         assert result is None
         assert "Amount cannot be zero" in info_msg
 
-    def test_NegativeAmount(self,info_msg):
+    def test_negative_amount(self,info_msg):
         result = pft.valid_amount("-1",info_msg.append)
         assert result is None 
         assert "Amount cannot be Negative" in info_msg 
 
-    def test_InvalidAmount(self,info_msg):
+    def test_invalid_amount(self,info_msg):
         result = pft.valid_amount("abdjfh##",info_msg.append)
         assert result is None 
         assert "Invalid Amount !! enter only numbers " in info_msg 
 
-    def test_AmountSize(self,info_msg):
+    def test_amount_size(self,info_msg):
         result = pft.valid_amount("1e29",info_msg.append)
         assert result is None 
         assert "Amount too huge! Maximum allowed is 1e20." in info_msg
 
-    def test_SimpleAmount(self,info_msg):
+    def test_simple_amount(self,info_msg):
         result = pft.valid_amount("$1023",info_msg.append)
         assert result == Decimal("1023")
         assert not info_msg
@@ -50,54 +50,54 @@ class TestValidAmount:
 
 class TestValidType:
 
-    def test_EmptyType(self,info_msg):
+    def test_empty_type(self,info_msg):
         result = pft.valid_type(None,info_msg.append)
         assert result is None 
         assert "Type cannot be Empty" in info_msg
 
-    def test_TypeSize(self,info_msg):
+    def test_type_size(self,info_msg):
         result = pft.valid_type("ui",info_msg.append)
         assert result is None 
         assert "Not a valid Type" in info_msg 
 
-    def test_InvalidType(self,info_msg):
+    def test_invalid_type(self,info_msg):
         result = pft.valid_type("o",info_msg.append)
         assert result is None 
         assert "Not a valid Type" in info_msg 
 
-    def test_NumericType(self,info_msg):
+    def test_numeric_type(self,info_msg):
         result = pft.valid_type("56",info_msg.append)
         assert result is None
         assert "Not a valid Type" in info_msg
 
-    def test_UpperType(self,info_msg):
+    def test_upper_type(self,info_msg):
         result = pft.valid_type("i",info_msg.append)
         assert result == "I" 
         assert not info_msg 
 
 class TestValidDesc:
 
-    def test_EmptyDesc(self,info_msg):
+    def test_empty_desc(self,info_msg):
         result = pft.valid_desc(None,info_msg.append)
         assert result is None 
         assert "Description cannot be empty " in info_msg
 
-    def test_DescSize(self,info_msg):
+    def test_desc_size(self,info_msg):
         result = pft.valid_desc("Spend10000rupeesinbirthdayshoppingatmallofranchiandanother1000atfoodhopping",info_msg.append)
         assert result is None
         assert "Description too long " in info_msg
 
-    def test_SpecialCharDesc(self,info_msg):
+    def test_special_char_desc(self,info_msg):
         result = pft.valid_desc("birthday-dress",info_msg.append)
         assert result is None
         assert "Special Characters not allowed " in info_msg
 
-    def test_digitDesc(self,info_msg):
+    def test_digit_desc(self,info_msg):
         result = pft.valid_desc("78678",info_msg.append)
         assert result is None 
         assert "Digits not allowed in Description" in info_msg
 
-    def test_UpperDesc(self,info_msg):
+    def test_upper_desc(self,info_msg):
         result = pft.valid_desc("FOOD",info_msg.append)
         assert result == "food"
         assert not info_msg
@@ -148,17 +148,17 @@ class TestValidChoice:
         assert result is None 
         assert "Invalid choice" in info_msg
 
-    def test_InvalidChoice(self,info_msg):
+    def test_invalid_choice(self,info_msg):
         result = pft.valid_choice("a",info_msg.append)
         assert result is None 
         assert "Invalid choice" in info_msg
 
-    def test_ChoiceNUmber(self,info_msg):
+    def test_choice_number(self,info_msg):
         result = pft.valid_choice("4",info_msg.append)
         assert result is None 
         assert "Invalid choice" in info_msg 
 
-    def test_ChoiceLength(self,info_msg):
+    def test_choice_length(self,info_msg):
         result = pft.valid_choice("abc",info_msg.append)
         assert result is None 
         assert "Invalid choice" in info_msg 
@@ -218,7 +218,7 @@ class TestViewSummary:
         assert result[2] == Decimal("-100.00")
 
     def test_invalid_value(self,info_msg):
-        result = pft.view_summary([{"Date":"17-10-2025","Amount" :"abc","Type":"E","Description": "food"}],info_msg.append)
+        pft.view_summary([{"Date":"17-10-2025","Amount" :"abc","Type":"E","Description": "food"}],info_msg.append)
         assert "1 corrupted transactions skipped" in info_msg
 
 class TestSearchByType:
@@ -237,14 +237,14 @@ class TestSearchByType:
 
         assert result == correct_result
 
-    def test_Empty_list(self,info_msg):
+    def test_empty_list(self,info_msg):
         result = pft.search_by_type(None,"I",info_msg.append)
         assert result == None 
         assert "No transaction found" in info_msg
 
     @patch("pft.valid_type")
 
-    def test_No_match(self,mock_valid_type,info_msg):
+    def test_no_match(self,mock_valid_type,info_msg):
         mock_valid_type.return_value ="E"
 
         test_list = [{"Date":"16-10-2025","Amount":"100","Type":"I","Description":"birthday"},{"Date":"17-10-2025","Amount":"200","Type":"I","Description":"birthday"}]
@@ -273,14 +273,14 @@ class TestSearchByDesc:
 
         assert result == correct_result
 
-    def test_Empty_list(self,info_msg):
+    def test_empty_list(self,info_msg):
         result = pft.search_by_desc(None,"food",info_msg.append)
         assert result == None 
         assert "No transaction found" in info_msg
 
     @patch("pft.valid_desc")
 
-    def test_No_match(self,mock_valid_desc,info_msg):
+    def test_no_match(self,mock_valid_desc,info_msg):
         mock_valid_desc.return_value ="salary"
 
         test_list = [{"Date":"16-10-2025","Amount":"100","Type":"E","Description":"shopping"},{"Date":"17-10-2025","Amount":"200","Type":"I","Description":"birthday"}]
@@ -381,10 +381,10 @@ class TestDeleteTransaction:
         assert len(test_list) == 1
 
 
-class TestDeleteAll:
+class Testdelete_all:
 
     def test_empty_transaction(self,info_msg):
-        result = pft.DeleteAll([],info_msg.append)
+        result = pft.delete_all([],info_msg.append)
         assert result is None
         assert "No transactions found" in info_msg
 
@@ -397,7 +397,7 @@ class TestDeleteAll:
         mocker.patch("builtins.open", mocker.mock_open())
         mock_csv_writer = mocker.patch("csv.writer")
 
-        result = pft.DeleteAll(test_list, info_msg.append)
+        result = pft.delete_all(test_list, info_msg.append)
 
         assert result is None
         assert len(test_list) == 0  # should be cleared

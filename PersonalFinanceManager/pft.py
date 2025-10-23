@@ -277,7 +277,7 @@ def view_summary(transactions ,info_callback = None):
 def search_by_type(transactions,type_,info_callback = None):
     '''search and print all transaction of the given type'''
 
-    searchTYPE = valid_type(type_,info_callback)
+    search_type = valid_type(type_,info_callback)
     if not transactions:
         call_info("No transaction found",info_callback)
         return None
@@ -285,7 +285,7 @@ def search_by_type(transactions,type_,info_callback = None):
     found = False
     for transaction in transactions:
         try: 
-            if transaction["Type"].upper() == searchTYPE.upper():
+            if transaction["Type"].upper() == search_type.upper():
                 match.append(transaction)
                 found = True
         except (KeyError, ValueError, TypeError) as e:
@@ -301,14 +301,14 @@ def search_by_type(transactions,type_,info_callback = None):
 def search_by_desc(transactions,desc,info_callback= None):
     '''search and print all transaction of the given description'''
 
-    descTYPE = valid_desc(desc,info_callback)
+    desc_type = valid_desc(desc,info_callback)
     if not transactions:
         call_info("No transaction found",info_callback)
         return None
     match = []
     found = False
     for transaction in transactions:
-        if descTYPE == transaction["Description"]:
+        if desc_type == transaction["Description"]:
             match.append(transaction)
             found = True
     if not found :
@@ -373,7 +373,7 @@ def delete_transaction(transactions,index_val,info_callback = None):
     
 
 
-def DeleteAll(transactions, info_callback = None):
+def delete_all(transactions, info_callback = None):
     if not transactions:
         call_info("No transactions found", info_callback)
         return None

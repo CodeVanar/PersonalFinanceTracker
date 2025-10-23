@@ -234,7 +234,7 @@ def open_win6():
         messagebox.showinfo("Info", msg)
     confirm = messagebox.askyesno("Confirm Delete", "Are you Sure you want to delete all the transactions")
     if confirm:
-        pft.DeleteAll(transactions, info_callback)
+        pft.delete_all(transactions, info_callback)
     
 
 
