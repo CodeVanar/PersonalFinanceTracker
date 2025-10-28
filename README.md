@@ -12,9 +12,11 @@ Add Transaction – Adds a new transaction with details like date, amount, type,
 
 View Summary – Displays a financial summary including net income, total expenses, and balance.
 
-Search by Type or Description – Allows users to search for specific transactions based on type or description.
+Search by Expense or Type – Allows users to search for specific transactions based on expense(credit or debit) or type.
 
 Delete Transaction – Deletes a particular transaction or clears the entire transaction history.
+
+Delete All - Deletes all the available transactions.
 
 When the program is launched, a GUI window appears with buttons corresponding to each function. Clicking a button executes the function, and inputs/outputs are displayed in the console
 
@@ -25,9 +27,9 @@ When the program is launched, a GUI window appears with buttons corresponding to
 ## Installation
 1. Clone the Repository
    - git clone https://github.com/data-divaa/PersonalFinanceTracker
-   - cd PersonalFinanceTracker
+   - cd PersonalFinanceManager
 2.  Launch the Application
-   - python PFT_GUI.py
+   - python GUI.py
 
 ## License
 This project is licensed under the MIT License.
