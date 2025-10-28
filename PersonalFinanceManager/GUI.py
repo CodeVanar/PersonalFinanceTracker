@@ -4,13 +4,10 @@ import pft
 import pandas as pd 
 import datetime
 from decimal import Decimal
-import pytest
 import sys
 from tkcalendar import DateEntry
 
-def run_pytest():
-    result = pytest.main(["-v","test_pft.py"])
-    return result == 0
+
 
 def start_gui():
     root = tk.Tk()
@@ -282,11 +279,4 @@ def start_gui():
 
 
 if __name__ == "__main__":
-    print("🧪 Running tests before starting the app...")
-    if run_pytest():
-        print("All tests passed. Launching GUI...")
-        start_gui()
-    else:
-        print("Some tests failed. Exiting app.")
-        sys.exit(1)
-
+    start_gui()

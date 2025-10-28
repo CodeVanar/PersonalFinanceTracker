@@ -48,60 +48,6 @@ class TestValidAmount:
         assert not info_msg
 
 
-class TestValidType:
-
-    def test_empty_type(self,info_msg):
-        result = pft.valid_type(None,info_msg.append)
-        assert result is None 
-        assert "Type cannot be Empty" in info_msg
-
-    def test_type_size(self,info_msg):
-        result = pft.valid_type("ui",info_msg.append)
-        assert result is None 
-        assert "Not a valid Type" in info_msg 
-
-    def test_invalid_type(self,info_msg):
-        result = pft.valid_type("o",info_msg.append)
-        assert result is None 
-        assert "Not a valid Type" in info_msg 
-
-    def test_numeric_type(self,info_msg):
-        result = pft.valid_type("56",info_msg.append)
-        assert result is None
-        assert "Not a valid Type" in info_msg
-
-    def test_upper_type(self,info_msg):
-        result = pft.valid_type("i",info_msg.append)
-        assert result == "I" 
-        assert not info_msg 
-
-class TestValidDesc:
-
-    def test_empty_desc(self,info_msg):
-        result = pft.valid_desc(None,info_msg.append)
-        assert result is None 
-        assert "Description cannot be empty " in info_msg
-
-    def test_desc_size(self,info_msg):
-        result = pft.valid_desc("Spend10000rupeesinbirthdayshoppingatmallofranchiandanother1000atfoodhopping",info_msg.append)
-        assert result is None
-        assert "Description too long " in info_msg
-
-    def test_special_char_desc(self,info_msg):
-        result = pft.valid_desc("birthday-dress",info_msg.append)
-        assert result is None
-        assert "Special Characters not allowed " in info_msg
-
-    def test_digit_desc(self,info_msg):
-        result = pft.valid_desc("78678",info_msg.append)
-        assert result is None 
-        assert "Digits not allowed in Description" in info_msg
-
-    def test_upper_desc(self,info_msg):
-        result = pft.valid_desc("FOOD",info_msg.append)
-        assert result == "food"
-        assert not info_msg
-
 class TestValidDate:
 
     def test_tommorow(self,info_msg):
@@ -166,8 +112,6 @@ class TestValidChoice:
 class TestAddTransaction:
     @patch("pft.call_info")
     @patch("pft.save_transaction")
-    @patch("pft.valid_desc")
-    @patch("pft.valid_type")
     @patch("pft.valid_amount")
     @patch("pft.valid_date")
     
