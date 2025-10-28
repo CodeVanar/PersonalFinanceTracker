@@ -180,7 +180,9 @@ class TestAddTransaction:
         mock_valid_amount.return_value = 1000
         mock_valid_type.return_value = "I"
 
-        pft.add_transaction("17-10-2025","1000","I","food",info_callback=info_msg.append)
+        transactions = []
+
+        pft.add_transaction([],"17-10-2025","1000","I","food",info_callback=info_msg.append)
 
         mock_valid_date.assert_called_once_with("17-10-2025",info_msg.append)
         mock_valid_type.assert_called_once_with("I",info_msg.append)

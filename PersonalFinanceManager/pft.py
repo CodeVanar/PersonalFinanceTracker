@@ -174,61 +174,15 @@ def valid_amount(amt,info_callback = None):
         
 
     return amt
+
     
 
-def valid_type(type_,info_callback= None ):
-    #keep asking for valid type as showed
-    if not type_ :
-        call_info("Type cannot be Empty",info_callback)
-        return None
-        
-    if len(type_) != 1:
-        call_info("Not a valid Type",info_callback)
-        return None
-        
-    if not type_.isalpha():
-        call_info("Not a valid Type",info_callback)
-        return None
 
-    if type_.upper() not in ["I", "E"]:
-        call_info("Not a valid Type",info_callback)
-        return None
-        
-
-    return type_.upper()
-    
-
-def valid_desc(desc,info_callback = None):
-#keep asking for a valid description
-
-    special_char = set("!@#$%^&*_,-+=/|><\\")
-
-    if not desc :
-        call_info("Description cannot be empty ",info_callback)
-        return None
-
-    if len(desc) > 50 :
-        call_info("Description too long ",info_callback)
-        return None
-
-    if any(ch in special_char for ch in desc):
-        call_info("Special Characters not allowed ",info_callback)
-        return None
-
-    if any(ch.isdigit() for ch in desc):
-        call_info("Digits not allowed in Description",info_callback)
-        return None
-
-    return desc.lower()
-
-
-def add_transaction(date_input,amt,type_,desc,info_callback = None):
+def add_transaction(transactions,date_input,amt,type_,desc,info_callback = None):
 
     #storing the input with the help of helper function
     date_input = valid_date(date_input,info_callback)
     amt = valid_amount(amt,info_callback)
-    type_ = valid_type(type_,info_callback)
-    desc = valid_desc(desc,info_callback)
 
     new_transaction = {
         "Date" : date_input.strftime("%d-%m-%Y"),
@@ -236,7 +190,8 @@ def add_transaction(date_input,amt,type_,desc,info_callback = None):
         "Type" : type_.upper(),
         "Description" : desc.lower()
     }
-        
+    
+    transactions.append(new_transaction)
     
     save_transaction(new_transaction,info_callback)
 
@@ -259,9 +214,9 @@ def view_summary(transactions ,info_callback = None):
     for transaction in transactions:
         try:
             amt = Decimal(transaction["Amount"])
-            if transaction["Type"].upper() == "I":
+            if transaction["Type"].upper() == "Credit".upper():
                 income += amt
-            elif transaction["Type"].upper() == "E":
+            elif transaction["Type"].upper() == "Debit".upper():
                 expense += amt
 
         except (KeyError, ValueError, InvalidOperation) as e:
@@ -277,7 +232,6 @@ def view_summary(transactions ,info_callback = None):
 def search_by_type(transactions,type_,info_callback = None):
     '''search and print all transaction of the given type'''
 
-    search_type = valid_type(type_,info_callback)
     if not transactions:
         call_info("No transaction found",info_callback)
         return None
@@ -285,7 +239,7 @@ def search_by_type(transactions,type_,info_callback = None):
     found = False
     for transaction in transactions:
         try: 
-            if transaction["Type"].upper() == search_type.upper():
+            if transaction["Type"].upper() == type_.upper():
                 match.append(transaction)
                 found = True
         except (KeyError, ValueError, TypeError) as e:
@@ -301,14 +255,13 @@ def search_by_type(transactions,type_,info_callback = None):
 def search_by_desc(transactions,desc,info_callback= None):
     '''search and print all transaction of the given description'''
 
-    desc_type = valid_desc(desc,info_callback)
     if not transactions:
         call_info("No transaction found",info_callback)
         return None
     match = []
     found = False
     for transaction in transactions:
-        if desc_type == transaction["Description"]:
+        if desc == transaction["Description"]:
             match.append(transaction)
             found = True
     if not found :
