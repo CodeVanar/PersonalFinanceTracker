@@ -24,7 +24,7 @@ When the program is launched, a GUI window appears with buttons corresponding to
 1. Python Environment
    - Python Version : 3.13.0 or higher
    - Download link : https://www.python.org/downloads/
-   - Ensure that Python and pip are added to your system PATH:
+   - Ensure that Python and pip are added to your system:
      - python --version
      - pip --version
 2. Required Python Libraries
