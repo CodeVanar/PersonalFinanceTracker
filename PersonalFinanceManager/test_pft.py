@@ -117,29 +117,25 @@ class TestAddTransaction:
     
     
 
-    def test_add_transaction_sucess(self,mock_valid_date,mock_valid_amount,mock_valid_type,mock_valid_desc,mock_save_transaction,mock_call_info,info_msg):
+    def test_add_transaction_sucess(self,mock_valid_date,mock_valid_amount,mock_save_transaction,mock_call_info,info_msg):
 
         mock_valid_date.return_value = datetime(2025,10,17)
-        mock_valid_desc.return_value = "food"
         mock_valid_amount.return_value = 1000
-        mock_valid_type.return_value = "I"
 
         transactions = []
 
-        pft.add_transaction([],"17-10-2025","1000","I","food",info_callback=info_msg.append)
+        pft.add_transaction([],"17-10-2025","1000","CREDIT","travel",info_callback=info_msg.append)
 
         mock_valid_date.assert_called_once_with("17-10-2025",info_msg.append)
-        mock_valid_type.assert_called_once_with("I",info_msg.append)
         mock_valid_amount.assert_called_once_with("1000",info_msg.append)
-        mock_valid_desc.assert_called_once_with("food",info_msg.append)
 
         
 
         expected_transaction = {
             "Date" : "17-10-2025",
             "Amount" : 1000,
-            "Type" : "I",
-            "Description" : "food"
+            "Type" : "CREDIT",
+            "Description" : "travel"
         }
 
         mock_save_transaction.assert_called_once_with(expected_transaction,info_msg.append)
@@ -154,50 +150,45 @@ class TestViewSummary:
         assert "No transaction records found" in info_msg
 
     def test_decimal_value(self,info_msg):
-        result = pft.view_summary([{"Date":"17-10-2025","Amount" :"12","Type":"E","Description": "food"}],info_msg.append)
+        result = pft.view_summary([{"Date":"17-10-2025","Amount" :"12","Type":"DEBIT","Description": "travel"}],info_msg.append)
         assert result[1] == Decimal("12.00")
 
     def test_correct_value(self,info_msg):
-        result = pft.view_summary([{"Date":"17-10-2025","Amount" :"100","Type":"E","Description": "food"}],info_msg.append)
+        result = pft.view_summary([{"Date":"17-10-2025","Amount" :"100","Type":"DEBIT","Description": "travel"}],info_msg.append)
         assert result[0] == Decimal("0.00")
         assert result[1] == Decimal("100.00")
         assert result[2] == Decimal("-100.00")
 
     def test_invalid_value(self,info_msg):
-        pft.view_summary([{"Date":"17-10-2025","Amount" :"abc","Type":"E","Description": "food"}],info_msg.append)
+        pft.view_summary([{"Date":"17-10-2025","Amount" :"abc","Type":"DEBIT","Description": "travel"}],info_msg.append)
         assert "1 corrupted transactions skipped" in info_msg
 
 class TestSearchByType:
 
-    @patch("pft.valid_type")
 
-    def test_correct_result(self,mock_valid_type,info_msg):
-        mock_valid_type.return_value = "I" 
-        test_list = [{"Date":"16-10-2025","Amount":"100","Type":"E","Description":"birthday"},{"Date":"17-10-2025","Amount":"200","Type":"I","Description":"birthday"}]
+    def test_correct_result(self,info_msg):
+        test_list = [{"Date":"16-10-2025","Amount":"100","Type":"DEBIT","Description":"fun"},{"Date":"17-10-2025","Amount":"200","Type":"CREDIT","Description":"fun"}]
 
-        result = pft.search_by_type(test_list,"I",info_msg.append)
+        result = pft.search_by_type(test_list,"CREDIT",info_msg.append)
 
-        mock_valid_type.assert_called_once_with("I",info_msg.append)
 
-        correct_result = [{"Date":"17-10-2025","Amount":"200","Type":"I","Description":"birthday"}]
+        correct_result = [{"Date":"17-10-2025","Amount":"200","Type":"CREDIT","Description":"fun"}]
 
         assert result == correct_result
 
     def test_empty_list(self,info_msg):
-        result = pft.search_by_type(None,"I",info_msg.append)
+        result = pft.search_by_type(None,"CREDIT",info_msg.append)
         assert result == None 
         assert "No transaction found" in info_msg
 
-    @patch("pft.valid_type")
 
-    def test_no_match(self,mock_valid_type,info_msg):
-        mock_valid_type.return_value ="E"
+    def test_no_match(self,info_msg):
 
-        test_list = [{"Date":"16-10-2025","Amount":"100","Type":"I","Description":"birthday"},{"Date":"17-10-2025","Amount":"200","Type":"I","Description":"birthday"}]
+        test_list = [{"Date":"16-10-2025","Amount":"100","Type":"CREDIT","Description":"fun"},{"Date":"17-10-2025","Amount":"200","Type":"CREDIT","Description":"fun"}]
 
-        result = pft.search_by_type(test_list,"E",info_msg.append)
+        result = pft.search_by_type(test_list,"DEBIT",info_msg.append)
 
-        mock_valid_type.assert_called_once_with("E",info_msg.append)
+        
 
         assert result == None 
         assert "No records found of the type" in info_msg
@@ -205,35 +196,26 @@ class TestSearchByType:
 
 class TestSearchByDesc:
 
-    @patch("pft.valid_desc")
 
-    def test_correct_result(self,mock_valid_desc,info_msg):
-        mock_valid_desc.return_value = "food" 
-        test_list = [{"Date":"16-10-2025","Amount":"100","Type":"E","Description":"food"},{"Date":"17-10-2025","Amount":"200","Type":"I","Description":"birthday"}]
+    def test_correct_result(self,info_msg): 
+        test_list = [{"Date":"16-10-2025","Amount":"100","Type":"DEBIT","Description":"travel"},{"Date":"17-10-2025","Amount":"200","Type":"CREDIT","Description":"fun"}]
 
-        result = pft.search_by_desc(test_list,"food",info_msg.append)
+        result = pft.search_by_desc(test_list,"travel",info_msg.append)
 
-        mock_valid_desc.assert_called_once_with("food",info_msg.append)
-
-        correct_result = [{"Date":"16-10-2025","Amount":"100","Type":"E","Description":"food"}]
+        correct_result = [{"Date":"16-10-2025","Amount":"100","Type":"DEBIT","Description":"travel"}]
 
         assert result == correct_result
 
     def test_empty_list(self,info_msg):
-        result = pft.search_by_desc(None,"food",info_msg.append)
+        result = pft.search_by_desc(None,"travel",info_msg.append)
         assert result == None 
         assert "No transaction found" in info_msg
 
-    @patch("pft.valid_desc")
+    def test_no_match(self,info_msg):
 
-    def test_no_match(self,mock_valid_desc,info_msg):
-        mock_valid_desc.return_value ="salary"
-
-        test_list = [{"Date":"16-10-2025","Amount":"100","Type":"E","Description":"shopping"},{"Date":"17-10-2025","Amount":"200","Type":"I","Description":"birthday"}]
+        test_list = [{"Date":"16-10-2025","Amount":"100","Type":"DEBIT","Description":"shopping"},{"Date":"17-10-2025","Amount":"200","Type":"CREDIT","Description":"fun"}]
 
         result = pft.search_by_desc(test_list,"salary",info_msg.append)
-
-        mock_valid_desc.assert_called_once_with("salary",info_msg.append)
 
         assert result == None 
         assert "No records found of the given decription" in info_msg
@@ -268,8 +250,8 @@ class TestDeleteTransaction:
 
     def test_index_len(self, info_msg):
         test_list = [
-            {"Date":"16-10-2025","Amount":"100","Type":"E","Description":"food"},
-            {"Date":"17-10-2025","Amount":"200","Type":"I","Description":"birthday"}
+            {"Date":"16-10-2025","Amount":"100","Type":"DEBIT","Description":"travel"},
+            {"Date":"17-10-2025","Amount":"200","Type":"CREDIT","Description":"fun"}
         ]
         result = pft.delete_transaction(test_list, "1 2", info_msg.append)
         assert result is None 
@@ -277,8 +259,8 @@ class TestDeleteTransaction:
 
     def test_index_greater_than_length(self, info_msg):
         test_list = [
-            {"Date":"16-10-2025","Amount":"100","Type":"E","Description":"food"},
-            {"Date":"17-10-2025","Amount":"200","Type":"I","Description":"birthday"}
+            {"Date":"16-10-2025","Amount":"100","Type":"DEBIT","Description":"travel"},
+            {"Date":"17-10-2025","Amount":"200","Type":"CREDIT","Description":"fun"}
         ]
         result = pft.delete_transaction(test_list, 5, info_msg.append)
         assert result is None
@@ -286,8 +268,8 @@ class TestDeleteTransaction:
 
     def test_negative_index(self, info_msg):
         test_list = [
-            {"Date":"16-10-2025","Amount":"100","Type":"E","Description":"food"},
-            {"Date":"17-10-2025","Amount":"200","Type":"I","Description":"birthday"}
+            {"Date":"16-10-2025","Amount":"100","Type":"DEBIT","Description":"travel"},
+            {"Date":"17-10-2025","Amount":"200","Type":"CREDIT","Description":"fun"}
         ]
         result = pft.delete_transaction(test_list, -1, info_msg.append)
         assert result is None
@@ -295,8 +277,8 @@ class TestDeleteTransaction:
 
     def test_alphabet_index(self, info_msg):
         test_list = [
-            {"Date":"16-10-2025","Amount":"100","Type":"E","Description":"food"},
-            {"Date":"17-10-2025","Amount":"200","Type":"I","Description":"birthday"}
+            {"Date":"16-10-2025","Amount":"100","Type":"DEBIT","Description":"travel"},
+            {"Date":"17-10-2025","Amount":"200","Type":"CREDIT","Description":"fun"}
         ]
         result = pft.delete_transaction(test_list, "a", info_msg.append)
         assert result is None
@@ -304,8 +286,8 @@ class TestDeleteTransaction:
 
     def test_special_char_index(self, info_msg):
         test_list = [
-            {"Date":"16-10-2025","Amount":"100","Type":"E","Description":"food"},
-            {"Date":"17-10-2025","Amount":"200","Type":"I","Description":"birthday"}
+            {"Date":"16-10-2025","Amount":"100","Type":"DEBIT","Description":"travel"},
+            {"Date":"17-10-2025","Amount":"200","Type":"CREDIT","Description":"fun"}
         ]
         result = pft.delete_transaction(test_list, "@", info_msg.append)
         assert result is None
@@ -313,8 +295,8 @@ class TestDeleteTransaction:
 
     def test_successful_deletion(self, info_msg, mocker):
         test_list = [
-            {"Date":"16-10-2025","Amount":"100","Type":"E","Description":"food"},
-            {"Date":"17-10-2025","Amount":"200","Type":"I","Description":"birthday"}
+            {"Date":"16-10-2025","Amount":"100","Type":"DEBIT","Description":"travel"},
+            {"Date":"17-10-2025","Amount":"200","Type":"CREDIT","Description":"fun"}
         ]
 
         # mock file writing and csv.writer
@@ -336,8 +318,8 @@ class Testdelete_all:
 
     def test_successful_delete_all(self, info_msg, mocker):
         test_list = [
-            {"Date": "16-10-2025", "Amount": "100", "Type": "E", "Description": "food"},
-            {"Date": "17-10-2025", "Amount": "200", "Type": "I", "Description": "birthday"}
+            {"Date": "16-10-2025", "Amount": "100", "Type": "DEBIT", "Description": "travel"},
+            {"Date": "17-10-2025", "Amount": "200", "Type": "CREDIT", "Description": "fun"}
         ]
 
         mocker.patch("builtins.open", mocker.mock_open())
@@ -417,7 +399,7 @@ class TestSaveTransaction:
         transaction = {
             "Date": date(2025, 1, 1),
             "Amount": 100,
-            "Type": "I",
+            "Type": "CREDIT",
             "Description": "Test"
         }
         m = mock_open()
@@ -437,7 +419,7 @@ class TestSaveTransaction:
         transaction = {
             "Date": date(2025, 1, 1),
             "Amount": 100,
-            "Type": "I",
+            "Type": "CREDIT",
             "Description": "Test"
         }
         with patch("os.path.exists", return_value=True), patch("builtins.open", side_effect=PermissionError):
@@ -448,7 +430,7 @@ class TestSaveTransaction:
         transaction = {
             "Date": date(2025, 1, 1),
             "Amount": 100,
-            "Type": "I",
+            "Type": "CREDIT",
             "Description": "Test"
         }
         with patch("os.path.exists", return_value=True), patch("builtins.open", side_effect=MemoryError):
@@ -459,7 +441,7 @@ class TestSaveTransaction:
         transaction = {
             "Date": date(2025, 1, 1),
             "Amount": 100,
-            "Type": "I",
+            "Type": "CREDIT",
             "Description": "Test"
         }
         with patch("os.path.exists", return_value=True), patch("builtins.open", side_effect=OSError("disk full")):
