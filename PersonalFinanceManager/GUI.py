@@ -1,3 +1,8 @@
+'''
+Author - 
+Date - 25-10-2025
+Desc - A clean and interactive Tkinter-based interface that allows users to easily add, view, and search financial transactions. The design focuses on simplicity and usability, with organized windows, dropdowns, and summaries to make expense tracking intuitive and visually clear
+'''
 import tkinter as tk
 from tkinter import ttk,messagebox
 import pft 
