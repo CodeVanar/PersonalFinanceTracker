@@ -34,7 +34,7 @@ When the program is launched, a GUI window appears with buttons corresponding to
 
 ## Installation
 1. Clone the Repository
-   - git clone https://github.com/data-divaa/PersonalFinanceTracker
+   - git clone https://github.com/CodeVanar/PersonalFinanceTracker
    - cd PersonalFinanceManager
 2.  Launch the Application
    - python GUI.py    
