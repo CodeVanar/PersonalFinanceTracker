@@ -1,5 +1,5 @@
 '''
-Author - 
+Author - CodeVaanar
 Date - 25-10-2025
 Desc - A pytest test file to integrate unittesting for the file - pft.py
 '''
@@ -418,7 +418,7 @@ class TestSaveTransaction:
         handle = m()
         written_text = "".join(call.args[0] for call in handle.write.call_args_list)
         assert "Date,Amount,Type,Description" in written_text
-        assert "01-01-2025,100,I,Test" in written_text
+        assert "01-01-2025,100,CREDIT,Test" in written_text
 
 
     def test_permission_error(self, info_msg):

@@ -1,5 +1,5 @@
 '''
-Author - 
+Author - CodeVaanar
 Date - 17-10-2025
 Desc- A Python-based application designed to help users track and manage their daily expenses and income. It allows adding, viewing, and searching transactions by expense or type, offering a clear summary of financial activity. Simple, efficient, and perfect for gaining better control over personal finances
 '''
